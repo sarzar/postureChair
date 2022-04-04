@@ -1,0 +1,12 @@
+.home-container{
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+    width: 100%;
+}
+.logo-container{
+    display: flex;
+    justify-content: left;
+    align-items: row;
+    width: 100%;
+}
