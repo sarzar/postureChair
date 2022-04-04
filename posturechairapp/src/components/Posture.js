@@ -11,7 +11,7 @@ var apiurl= 'https://posture-prediction.cognitiveservices.azure.com/customvision
 const videoConstraints = {
     width: 720,
     height: 480,
-    aspectRatio: 1
+    aspectRatio: 1.5,
 };
 
 async function postData(url = '', data = {}) {
@@ -21,6 +21,8 @@ async function postData(url = '', data = {}) {
     mode: 'cors', // no-cors, *cors, same-origin
     cache: 'no-cache', // *default, no-cache, reload, force-cache, only-if-cached
     credentials: 'same-origin', // include, *same-origin, omit
+
+    //Utilized Custom Vision AI API to integrate machine learning
     headers: {
       'Content-Type': 'application/octet-stream',
      "Prediction-Key":'931ce4aeeefa4a2e9efc9a9db63ac14a'
@@ -101,7 +103,7 @@ var fileData = dataURLtoFile(imgSrc, "imageName.jpg");
 postData(apiurl, fileData)
 .then(data => {
 console.log(data.predictions[0].tagName); // JSON data parsed by `data.json()` call
-if (posture.PostureState=="good" && data.predictions[0].tagName!="Good Posture"){
+if (posture.PostureState=="good" && data.predictions[0].tagName!="Good"){
   switch(data.predictions[0].tagName) {
     case "Head Tilt":
       localStorage.setItem('Headtilt', posture.HeadTilt + 1 );
@@ -142,7 +144,7 @@ if (posture.PostureState=="good" && data.predictions[0].tagName!="Good Posture")
     capture()
   }, 2000);
 }
-else if (posture.PostureState=="bad" && data.predictions[0].tagName=="Good Posture"){
+else if (posture.PostureState=="bad" && data.predictions[0].tagName=="Good"){
 
   setPosture(prevPosture => {
           return {
@@ -169,7 +171,7 @@ else if (posture.PostureState=="bad" && data.predictions[0].tagName=="Good Postu
         <Alert variant = "filled"
         severity = "error"
         className = "alert"> 
-        { "Warning! Following bad posture detected: " + posture.Err_msg + ". Please fix immediately :)" } 
+        { "Warning! Bad posture detected. Please fix immediately :)" } 
         </Alert> 
         </Grow>
         <Webcam videoConstraints = {videoConstraints}
@@ -183,7 +185,7 @@ else if (posture.PostureState=="bad" && data.predictions[0].tagName=="Good Postu
             (posture.Session == "Start") ? "Stop" : "Start"
         } </Button>
         <div />
-        <h3> Below is a breakdown of your posture during this session: </h3>
+    
         {
             imgSrc &&
             <img id="image" className="detect" ref={imgRef} src={imgSrc} />
